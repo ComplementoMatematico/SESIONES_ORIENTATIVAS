@@ -10,8 +10,8 @@
 
     /* Rompe el padding interno de .capsula-body y se extiende al ancho completo */
     .video-bloque-fullwidth {
-      margin-left: -2rem;
-      margin-right: -2rem;
+      margin-left: -28px;
+      margin-right: -28px;
     }
 
     .video-player-section {
@@ -253,6 +253,13 @@
     }
 
     /* ── Responsive ── */
+    @media (max-width: 640px) {
+      .video-bloque-fullwidth {
+        margin-left: -20px;
+        margin-right: -20px;
+      }
+    }
+
     @media (max-width: 680px) {
       .video-player-layout {
         flex-direction: column;
@@ -335,7 +342,7 @@
 
         <!-- ── VIDEO PLAYER CÁPSULA 1 ── -->
         <div class="capsula-bloque video-bloque-fullwidth">
-          <div style="padding: 0 2rem 1rem;">
+          <div style="padding: 0 28px 1rem;">
             <div class="bloque-label"><div class="bloque-label-icon">🎬</div> Videos de la cápsula</div>
             <div class="capsula-progress" id="progress-c1">
               <span class="progress-label">Progreso</span>
@@ -453,7 +460,7 @@
 
         <!-- ── VIDEO PLAYER CÁPSULA 2 ── -->
         <div class="capsula-bloque video-bloque-fullwidth">
-          <div style="padding: 0 2rem 1rem;">
+          <div style="padding: 0 28px 1rem;">
             <div class="bloque-label"><div class="bloque-label-icon">🎬</div> Videos de la cápsula</div>
             <div class="capsula-progress" id="progress-c2">
               <span class="progress-label">Progreso</span>
