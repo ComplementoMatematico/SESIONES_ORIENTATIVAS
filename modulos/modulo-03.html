@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Módulo 03 – Sesiones Orientativas IV SEDPEM</title>
+  <link rel="stylesheet" href="../css/styles.css">
+  <style>
+    /* ── Udemy-style Video Player ── */
+    .video-player-section {
+      background: #1c1d1f;
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 0 0 1.5rem 0;
+    }
+
+    .video-player-layout {
+      display: flex;
+      min-height: 340px;
+    }
+
+    .video-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #000;
+    }
+
+    .video-embed-wrapper {
+      position: relative;
+      width: 100%;
+      padding-top: 56.25%;
+      background: #000;
+    }
+
+    .video-embed-wrapper iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .video-embed-wrapper .video-placeholder {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #1c1d1f;
+      color: #fff;
+      gap: 12px;
+      cursor: pointer;
+    }
+
+    .video-placeholder-icon {
+      width: 64px;
+      height: 64px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      transition: background 0.2s;
+    }
+
+    .video-placeholder:hover .video-placeholder-icon {
+      background: rgba(255,255,255,0.25);
+    }
+
+    .video-placeholder-title {
+      font-size: 14px;
+      color: rgba(255,255,255,0.7);
+      text-align: center;
+      padding: 0 1rem;
+      max-width: 300px;
+    }
+
+    .video-info-bar {
+      background: #1c1d1f;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .video-info-title {
+      font-size: 13px;
+      font-weight: 500;
+      color: #fff;
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .video-info-meta {
+      font-size: 12px;
+      color: rgba(255,255,255,0.55);
+      white-space: nowrap;
+    }
+
+    /* ── Playlist Sidebar ── */
+    .video-sidebar {
+      width: 260px;
+      background: #1c1d1f;
+      border-left: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .sidebar-header {
+      padding: 10px 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      font-size: 12px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.6);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .sidebar-list {
+      flex: 1;
+      overflow-y: auto;
+      max-height: 300px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,0.2) transparent;
+    }
+
+    .sidebar-list::-webkit-scrollbar { width: 4px; }
+    .sidebar-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 2px; }
+
+    .video-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 14px;
+      cursor: pointer;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      transition: background 0.15s;
+    }
+
+    .video-item:hover {
+      background: rgba(255,255,255,0.06);
+    }
+
+    .video-item.active {
+      background: rgba(255,255,255,0.1);
+      border-left: 3px solid #a435f0;
+    }
+
+    .video-item.completed .item-check {
+      background: #5624d0;
+      border-color: #5624d0;
+    }
+
+    .item-check {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.3);
+      flex-shrink: 0;
+      margin-top: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      color: #fff;
+    }
+
+    .item-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .item-title {
+      font-size: 12px;
+      color: rgba(255,255,255,0.9);
+      line-height: 1.4;
+      margin-bottom: 3px;
+    }
+
+    .video-item.active .item-title {
+      color: #fff;
+      font-weight: 500;
+    }
+
+    .item-duration {
+      font-size: 11px;
+      color: rgba(255,255,255,0.4);
+    }
+
+    .item-now-playing {
+      font-size: 10px;
+      color: #a435f0;
+      font-weight: 500;
+      display: none;
+    }
+
+    .video-item.active .item-now-playing {
+      display: block;
+    }
+
+    /* ── Progress bar ── */
+    .capsula-progress {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 1rem;
+      padding: 8px 12px;
+      background: #f3f0ff;
+      border-radius: 6px;
+      border-left: 3px solid #5624d0;
+    }
+
+    .progress-label {
+      font-size: 12px;
+      color: #5624d0;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .progress-bar-track {
+      flex: 1;
+      height: 6px;
+      background: rgba(86,36,208,0.15);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: #5624d0;
+      border-radius: 3px;
+      transition: width 0.4s ease;
+    }
+
+    .progress-count {
+      font-size: 12px;
+      color: #5624d0;
+      white-space: nowrap;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 680px) {
+      .video-player-layout {
+        flex-direction: column;
+      }
+      .video-sidebar {
+        width: 100%;
+        border-left: none;
+        border-top: 1px solid rgba(255,255,255,0.1);
+      }
+      .sidebar-list {
+        max-height: 200px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="../index.html" class="header-logo">SO</a>
+      <a href="../index.html" class="header-title">
+        Sesiones Orientativas IV
+        <span>SEDPEM · Curso</span>
+      </a>
+      <nav class="header-nav">
+        <a href="../index.html">← Todos los módulos</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="modulo-hero">
+    <div class="modulo-hero-inner">
+      <div class="breadcrumb">
+        <a href="../index.html">Inicio</a>
+        <span class="breadcrumb-sep">/</span>
+        <span class="breadcrumb-current">Módulo 03</span>
+      </div>
+      <div class="modulo-hero-num">Módulo 03 · HTML · CSS · JS · Claude AI</div>
+      <h1>Creación de recursos digitales complementarios con HTML + CSS + JavaScript por medio de Claude</h1>
+      <p>Diseña y construye recursos interactivos para tus estudiantes usando inteligencia artificial como copiloto. Sin experiencia previa en programación requerida.</p>
+    </div>
+  </section>
+
+  <div class="capsulas-container">
+
+    <!-- ── CÁPSULA 1 ── -->
+    <article class="capsula">
+      <div class="capsula-header">
+        <div class="capsula-num">1</div>
+        <div class="capsula-titulo">¿Qué es Claude y cómo usarlo para crear recursos?</div>
+      </div>
+      <div class="capsula-body">
+
+        <div class="capsula-bloque">
+          <div class="bloque-label"><div class="bloque-label-icon">🎯</div> Objetivo</div>
+          <p>Comprender el funcionamiento básico de Claude como asistente de IA para la generación de código y recursos digitales educativos, y realizar las primeras interacciones productivas.</p>
+        </div>
+
+        <hr class="divider">
+
+        <div class="capsula-bloque">
+          <div class="bloque-label"><div class="bloque-label-icon">📚</div> Aprendizaje esperado</div>
+          <p>Las y los docentes formularán prompts efectivos en Claude para generar código HTML funcional, entenderán la estructura básica de una página web y podrán solicitar ajustes y mejoras al asistente.</p>
+        </div>
+
+        <hr class="divider">
+
+        <div class="capsula-bloque">
+          <div class="bloque-label"><div class="bloque-label-icon">📋</div> Instrucciones</div>
+          <ol>
+            <li>Accede a <strong>claude.ai</strong> y crea una cuenta gratuita.</li>
+            <li>Escribe el siguiente prompt de prueba: <em>"Crea una página HTML simple con un título, un párrafo de bienvenida y un botón que muestre una alerta al hacer clic."</em></li>
+            <li>Copia el código generado y ábrelo en tu navegador (guárdalo como archivo .html).</li>
+            <li>Pide a Claude que modifique el color del botón y el texto del título.</li>
+            <li>Reflexiona: ¿Cómo describirías una actividad interactiva para tus estudiantes en términos de código?</li>
+          </ol>
+        </div>
+
+        <hr class="divider">
+
+        <!-- ── VIDEO PLAYER CÁPSULA 1 ── -->
+        <div class="capsula-bloque">
+          <div class="bloque-label"><div class="bloque-label-icon">🎬</div> Videos de la cápsula</div>
+
+          <!-- Barra de progreso -->
+          <div class="capsula-progress" id="progress-c1">
+            <span class="progress-label">Progreso</span>
+            <div class="progress-bar-track">
+              <div class="progress-bar-fill" id="fill-c1" style="width: 0%"></div>
+            </div>
+            <span class="progress-count" id="count-c1">0 / 3</span>
+          </div>
+
+          <div class="video-player-section">
+            <div class="video-player-layout">
+
+              <!-- Reproductor principal -->
+              <div class="video-main">
+                <div class="video-embed-wrapper">
+                  <div class="video-placeholder" id="placeholder-c1" onclick="playVideo('c1', 0)">
+                    <div class="video-placeholder-icon">▶</div>
+                    <div class="video-placeholder-title">Haz clic para reproducir el primer video</div>
+                  </div>
+                  <iframe id="player-c1" src="" allowfullscreen loading="lazy" title="Video cápsula 1" style="display:none;"></iframe>
+                </div>
+                <div class="video-info-bar">
+                  <span class="video-info-title" id="title-c1">Selecciona un video para comenzar</span>
+                  <span class="video-info-meta" id="meta-c1"></span>
+                </div>
+              </div>
+
+              <!-- Lista de videos -->
+              <div class="video-sidebar">
+                <div class="sidebar-header">Contenido · 3 videos</div>
+                <div class="sidebar-list" id="list-c1">
+
+                  <div class="video-item" onclick="playVideo('c1', 0)" data-index="0">
+                    <div class="item-check" id="check-c1-0"></div>
+                    <div class="item-info">
+                      <div class="item-title">Introducción a Claude AI para docentes</div>
+                      <div class="item-now-playing">▶ Reproduciendo</div>
+                      <div class="item-duration">⏱ 8 min</div>
+                    </div>
+                  </div>
+
+                  <div class="video-item" onclick="playVideo('c1', 1)" data-index="1">
+                    <div class="item-check" id="check-c1-1"></div>
+                    <div class="item-info">
+                      <div class="item-title">Tu primer prompt: estructura básica de HTML</div>
+                      <div class="item-now-playing">▶ Reproduciendo</div>
+                      <div class="item-duration">⏱ 12 min</div>
+                    </div>
+                  </div>
+
+                  <div class="video-item" onclick="playVideo('c1', 2)" data-index="2">
+                    <div class="item-check" id="check-c1-2"></div>
+                    <div class="item-info">
+                      <div class="item-title">Cómo pedir ajustes y mejoras a Claude</div>
+                      <div class="item-now-playing">▶ Reproduciendo</div>
+                      <div class="item-duration">⏱ 10 min</div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <hr class="divider">
+
+        <div class="capsula-bloque">
+          <div class="bloque-label"><div class="bloque-label-icon">🔗</div> Recursos de apoyo</div>
+          <div class="botones-recursos">
+            <a href="https://claude.ai" target="_blank" class="btn-recurso">🤖 Ir a Claude AI</a>
+            <a href="#" target="_blank" class="btn-recurso secondary">💡 Guía de prompts para docentes</a>
+            <a href="#" target="_blank" class="btn-recurso secondary">📄 Ejemplo HTML básico</a>
+          </div>
+        </div>
+
+      </div>
+    </article>
+
+    <!-- ── CÁPSULA 2 ── -->
+    <article class="capsula">
+      <div class="capsula-header">
+        <div class="capsula-num">2</div>
+        <div class="capsula-titulo">Creando tu primer recurso interactivo para estudiantes</div>
+      </div>
+      <div class="capsula-body">
+
+        <div class="capsula-bloque">
+          <div class="bloque-label"><div class="bloque-label-icon">🎯</div> Objetivo</div>
+          <p>Producir un recurso digital educativo completo y funcional (quiz, infografía interactiva o actividad de emparejamiento) usando Claude como asistente de desarrollo.</p>
+        </div>
+
+        <hr class="divider">
+
+        <div class="capsula-bloque">
+          <div class="bloque-label"><div class="bloque-label-icon">📚</div> Aprendizaje esperado</div>
+          <p>Las y los docentes construirán un recurso HTML interactivo propio, adaptado a su asignatura y nivel educativo, listo para ser compartido con estudiantes vía enlace o archivo.</p>
+        </div>
+
+        <hr class="divider">
+
+        <div class="capsula-bloque">
+          <div class="bloque-label"><div class="bloque-label-icon">📋</div> Instrucciones</div>
+          <ol>
+            <li>Elige el tipo de recurso que necesitas: quiz de opción múltiple, actividad de ordenar pasos, o mapa conceptual interactivo.</li>
+            <li>Redacta un prompt detallado para Claude describiendo: tipo de recurso, asignatura, nivel, número de preguntas/elementos y estilo visual.</li>
+            <li>Itera con Claude al menos 3 veces pidiendo mejoras: colores, instrucciones, retroalimentación inmediata, etc.</li>
+            <li>Guarda el archivo HTML final y pruébalo en distintos navegadores.</li>
+            <li>Comparte el archivo con un colega para recibir retroalimentación pedagógica.</li>
+          </ol>
+        </div>
+
+        <hr class="divider">
+
+        <!-- ── VIDEO PLAYER CÁPSULA 2 ── -->
+        <div class="capsula-bloque">
+          <div class="bloque-label"><div class="bloque-label-icon">🎬</div> Videos de la cápsula</div>
+
+          <!-- Barra de progreso -->
+          <div class="capsula-progress" id="progress-c2">
+            <span class="progress-label">Progreso</span>
+            <div class="progress-bar-track">
+              <div class="progress-bar-fill" id="fill-c2" style="width: 0%"></div>
+            </div>
+            <span class="progress-count" id="count-c2">0 / 4</span>
+          </div>
+
+          <div class="video-player-section">
+            <div class="video-player-layout">
+
+              <!-- Reproductor principal -->
+              <div class="video-main">
+                <div class="video-embed-wrapper">
+                  <div class="video-placeholder" id="placeholder-c2" onclick="playVideo('c2', 0)">
+                    <div class="video-placeholder-icon">▶</div>
+                    <div class="video-placeholder-title">Haz clic para reproducir el primer video</div>
+                  </div>
+                  <iframe id="player-c2" src="" allowfullscreen loading="lazy" title="Video cápsula 2" style="display:none;"></iframe>
+                </div>
+                <div class="video-info-bar">
+                  <span class="video-info-title" id="title-c2">Selecciona un video para comenzar</span>
+                  <span class="video-info-meta" id="meta-c2"></span>
+                </div>
+              </div>
+
+              <!-- Lista de videos -->
+              <div class="video-sidebar">
+                <div class="sidebar-header">Contenido · 4 videos</div>
+                <div class="sidebar-list" id="list-c2">
+
+                  <div class="video-item" onclick="playVideo('c2', 0)" data-index="0">
+                    <div class="item-check" id="check-c2-0"></div>
+                    <div class="item-info">
+                      <div class="item-title">Eligiendo el tipo de recurso adecuado</div>
+                      <div class="item-now-playing">▶ Reproduciendo</div>
+                      <div class="item-duration">⏱ 7 min</div>
+                    </div>
+                  </div>
+
+                  <div class="video-item" onclick="playVideo('c2', 1)" data-index="1">
+                    <div class="item-check" id="check-c2-1"></div>
+                    <div class="item-info">
+                      <div class="item-title">Redactando prompts detallados y efectivos</div>
+                      <div class="item-now-playing">▶ Reproduciendo</div>
+                      <div class="item-duration">⏱ 15 min</div>
+                    </div>
+                  </div>
+
+                  <div class="video-item" onclick="playVideo('c2', 2)" data-index="2">
+                    <div class="item-check" id="check-c2-2"></div>
+                    <div class="item-info">
+                      <div class="item-title">Iterar y mejorar tu recurso con Claude</div>
+                      <div class="item-now-playing">▶ Reproduciendo</div>
+                      <div class="item-duration">⏱ 11 min</div>
+                    </div>
+                  </div>
+
+                  <div class="video-item" onclick="playVideo('c2', 3)" data-index="3">
+                    <div class="item-check" id="check-c2-3"></div>
+                    <div class="item-info">
+                      <div class="item-title">Probar y compartir tu recurso final</div>
+                      <div class="item-now-playing">▶ Reproduciendo</div>
+                      <div class="item-duration">⏱ 9 min</div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <hr class="divider">
+
+        <div class="capsula-bloque">
+          <div class="bloque-label"><div class="bloque-label-icon">🔗</div> Recursos de apoyo</div>
+          <div class="botones-recursos">
+            <a href="#" target="_blank" class="btn-recurso">📝 Banco de prompts educativos</a>
+            <a href="#" target="_blank" class="btn-recurso secondary">🎨 Recursos de ejemplo (quiz, infografía)</a>
+            <a href="#" target="_blank" class="btn-recurso secondary">🧪 Cómo probar tu HTML local</a>
+            <a href="modulo-04.html" class="btn-recurso dorado">▶ Avanzar al Módulo 04</a>
+          </div>
+        </div>
+
+      </div>
+    </article>
+
+  </div>
+
+  <div class="nav-modulos">
+    <a href="modulo-02.html" class="nav-btn">← Módulo 02</a>
+    <a href="modulo-04.html" class="nav-btn">Módulo 04 →</a>
+  </div>
+
+  <footer class="site-footer">
+    <strong>Sesiones Orientativas IV · SEDPEM</strong> &nbsp;·&nbsp; Módulo 03
+  </footer>
+
+  <script>
+    /*
+     * VIDEO DATA
+     * Reemplaza VIDEO_ID_X con los IDs reales de YouTube.
+     * Para otros módulos, solo duplica el objeto en videos[] con el ID correcto.
+     */
+    const videoData = {
+      c1: [
+        { id: 'https://youtu.be/bW9FoEIImuU', title: 'Introducción a Claude AI para docentes',         duration: '8 min'  },
+        { id: 'VIDEO_ID_1B', title: 'Tu primer prompt: estructura básica de HTML',     duration: '12 min' },
+        { id: 'VIDEO_ID_1C', title: 'Cómo pedir ajustes y mejoras a Claude',           duration: '10 min' },
+      ],
+      c2: [
+        { id: 'VIDEO_ID_2A', title: 'Eligiendo el tipo de recurso adecuado',           duration: '7 min'  },
+        { id: 'VIDEO_ID_2B', title: 'Redactando prompts detallados y efectivos',       duration: '15 min' },
+        { id: 'VIDEO_ID_2C', title: 'Iterar y mejorar tu recurso con Claude',          duration: '11 min' },
+        { id: 'VIDEO_ID_2D', title: 'Probar y compartir tu recurso final',             duration: '9 min'  },
+      ]
+    };
+
+    /* Tracks which videos have been opened per capsule */
+    const watched = { c1: new Set(), c2: new Set() };
+
+    function playVideo(capsule, index) {
+      const videos = videoData[capsule];
+      const video  = videos[index];
+
+      /* Show iframe, hide placeholder */
+      const placeholder = document.getElementById('placeholder-' + capsule);
+      const player      = document.getElementById('player-' + capsule);
+      placeholder.style.display = 'none';
+      player.style.display      = 'block';
+      player.src = 'https://www.youtube.com/embed/' + video.id + '?autoplay=1&rel=0';
+
+      /* Update info bar */
+      document.getElementById('title-' + capsule).textContent = video.title;
+      document.getElementById('meta-' + capsule).textContent  = video.duration;
+
+      /* Update sidebar active state */
+      const items = document.querySelectorAll('#list-' + capsule + ' .video-item');
+      items.forEach((item, i) => {
+        item.classList.toggle('active', i === index);
+      });
+
+      /* Mark as watched & update check + progress */
+      watched[capsule].add(index);
+      updateProgress(capsule);
+    }
+
+    function updateProgress(capsule) {
+      const total    = videoData[capsule].length;
+      const done     = watched[capsule].size;
+      const pct      = Math.round((done / total) * 100);
+
+      document.getElementById('fill-' + capsule).style.width = pct + '%';
+      document.getElementById('count-' + capsule).textContent = done + ' / ' + total;
+
+      /* Color checks */
+      watched[capsule].forEach(i => {
+        const check = document.getElementById('check-' + capsule + '-' + i);
+        if (check) {
+          check.style.background    = '#5624d0';
+          check.style.borderColor   = '#5624d0';
+          check.textContent         = '✓';
+          check.closest('.video-item').classList.add('completed');
+        }
+      });
+    }
+  </script>
+
+</body>
+</html>
