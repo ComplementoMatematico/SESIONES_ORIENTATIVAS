@@ -7,16 +7,23 @@
   <link rel="stylesheet" href="../css/styles.css">
   <style>
     /* ── Udemy-style Video Player ── */
+
+    /* Rompe el padding interno de .capsula-body y se extiende al ancho completo */
+    .video-bloque-fullwidth {
+      margin-left: -2rem;
+      margin-right: -2rem;
+    }
+
     .video-player-section {
       background: #1c1d1f;
-      border-radius: 8px;
+      border-radius: 0;
       overflow: hidden;
       margin: 0 0 1.5rem 0;
     }
 
     .video-player-layout {
       display: flex;
-      min-height: 340px;
+      min-height: 400px;
     }
 
     .video-main {
@@ -327,16 +334,16 @@
         <hr class="divider">
 
         <!-- ── VIDEO PLAYER CÁPSULA 1 ── -->
-        <div class="capsula-bloque">
-          <div class="bloque-label"><div class="bloque-label-icon">🎬</div> Videos de la cápsula</div>
-
-          <!-- Barra de progreso -->
-          <div class="capsula-progress" id="progress-c1">
-            <span class="progress-label">Progreso</span>
-            <div class="progress-bar-track">
-              <div class="progress-bar-fill" id="fill-c1" style="width: 0%"></div>
+        <div class="capsula-bloque video-bloque-fullwidth">
+          <div style="padding: 0 2rem 1rem;">
+            <div class="bloque-label"><div class="bloque-label-icon">🎬</div> Videos de la cápsula</div>
+            <div class="capsula-progress" id="progress-c1">
+              <span class="progress-label">Progreso</span>
+              <div class="progress-bar-track">
+                <div class="progress-bar-fill" id="fill-c1" style="width: 0%"></div>
+              </div>
+              <span class="progress-count" id="count-c1">0 / 3</span>
             </div>
-            <span class="progress-count" id="count-c1">0 / 3</span>
           </div>
 
           <div class="video-player-section">
@@ -445,16 +452,16 @@
         <hr class="divider">
 
         <!-- ── VIDEO PLAYER CÁPSULA 2 ── -->
-        <div class="capsula-bloque">
-          <div class="bloque-label"><div class="bloque-label-icon">🎬</div> Videos de la cápsula</div>
-
-          <!-- Barra de progreso -->
-          <div class="capsula-progress" id="progress-c2">
-            <span class="progress-label">Progreso</span>
-            <div class="progress-bar-track">
-              <div class="progress-bar-fill" id="fill-c2" style="width: 0%"></div>
+        <div class="capsula-bloque video-bloque-fullwidth">
+          <div style="padding: 0 2rem 1rem;">
+            <div class="bloque-label"><div class="bloque-label-icon">🎬</div> Videos de la cápsula</div>
+            <div class="capsula-progress" id="progress-c2">
+              <span class="progress-label">Progreso</span>
+              <div class="progress-bar-track">
+                <div class="progress-bar-fill" id="fill-c2" style="width: 0%"></div>
+              </div>
+              <span class="progress-count" id="count-c2">0 / 4</span>
             </div>
-            <span class="progress-count" id="count-c2">0 / 4</span>
           </div>
 
           <div class="video-player-section">
@@ -556,7 +563,7 @@
      */
     const videoData = {
       c1: [
-        { id: 'bW9FoEIImuU', title: 'Introducción a Claude AI para docentes',         duration: '8 min'  },
+        { id: 'VIDEO_ID_1A', title: 'Introducción a Claude AI para docentes',         duration: '8 min'  },
         { id: 'VIDEO_ID_1B', title: 'Tu primer prompt: estructura básica de HTML',     duration: '12 min' },
         { id: 'VIDEO_ID_1C', title: 'Cómo pedir ajustes y mejoras a Claude',           duration: '10 min' },
       ],
